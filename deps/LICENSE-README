@@ -1,0 +1,5 @@
+install-deps.sh inside this folder is licensed Apache-2.0
+
+Each folder under deps contains their own respective license. 
+    -./libuv-* is a copy from https://github.com/libuv/libuv (See ./libuv-*/LICENSE)
+    -./twlib: see twlib/licenses and twlib/license.txt
