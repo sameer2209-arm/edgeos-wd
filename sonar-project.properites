@@ -1,0 +1,11 @@
+sonar.projectKey=edge:edgeos-wd:master
+sonar.projectName=edgeos-wd
+sonar.projectVersion=1.0.0
+sonar.host.url=10.118.123.37:9000
+sonar.login=80cdc15bd34e45ccb396fc79f23ab454c94b8c1e
+sonar.sources=.
+sonar.exclusions=deps/**
+sonar.lang.patterns.c =''
+sonar.artifact.path=edgeos-wd
+sonar.cxx.cppcheck.reportPath=cppcheck-report.xml
+sonar.cxx.includeDirectories=/usr/include/c++/4.8,/usr/include/i386-linux-gnu/c++/4.8,/usr/include,/usr/include/c++/4.8/tr1,/usr/include/linux,deps
