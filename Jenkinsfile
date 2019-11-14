@@ -1,5 +1,7 @@
 pipeline {
-  agent any
+  agent{
+    label 'master'
+  }
   stages {
     stage('Setup Environment') {
       steps {
@@ -15,7 +17,9 @@ pipeline {
     stage('Test and Code Review') {
       parallel {
         stage('Test'){
-          agent any
+          agent{
+            label 'master'
+          }
           steps {
             sh 'touch coverage.xml'
             sh 'touch report.xml'
@@ -23,7 +27,9 @@ pipeline {
         }
         
         stage('SonarQube'){
-          agent any
+          agent{
+            label 'master'
+          }
           environment {
             scannerHome = tool 'SonarQubeScanner'
           }
