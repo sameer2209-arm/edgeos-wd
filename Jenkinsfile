@@ -43,10 +43,19 @@ pipeline {
     }
   }
  post{
+   success{
+      slackSend(channel: '#edge-jenkins-ci', color: 'good', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+    }
+    failure{
+      slackSend(channel: '#edge-jenkins-ci', color: 'danger', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+    }
+    unstable{
+      slackSend(channel: '#edge-jenkins-ci', color: 'warning', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+    }
     always{
       //junit 'report.xml'
       archiveArtifacts artifacts: 'html/**/*'
-      sh "curl -X POST -H \"Content-type: application/json\" --data '{\"channel\": \"#edge-jenkins-ci\", \"username\": \"webhookbot\", \"text\": \"JOB NAME: ${env.JOB_NAME}\\nBUILD NUMBER: ${env.BUILD_NUMBER}\\nSTATUS: ${currentBuild.currentResult}\\n${env.RUN_DISPLAY_URL}\"}' https://hooks.slack.com/services/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"
+      //sh "curl -X POST -H \"Content-type: application/json\" --data '{\"channel\": \"#edge-jenkins-ci\", \"username\": \"webhookbot\", \"text\": \"JOB NAME: ${env.JOB_NAME}\\nBUILD NUMBER: ${env.BUILD_NUMBER}\\nSTATUS: ${currentBuild.currentResult}\\n${env.RUN_DISPLAY_URL}\"}' https://hooks.slack.com/services/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"
     }
     
  }
