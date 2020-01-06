@@ -36,8 +36,8 @@ pipeline {
             label 'noida-linux-ubuntu16-ci-slave'
           }
           steps {
-            sh 'touch coverage.xml && mv coverage.xml /var/lib/jenkins/workspace/edgeos-wd'
-            sh 'touch report.xml && mv report.xml /var/lib/jenkins/workspace/edgeos-wd'
+            sh 'touch coverage.xml'
+            sh 'touch report.xml'
           }
         }
         
