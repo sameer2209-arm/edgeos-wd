@@ -11,8 +11,10 @@ pipeline {
       steps{
         checkout scm
       }
-      always{
-        gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started..hello from jenkins')
+      post{
+        always{
+          gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started..hello from jenkins')
+        }
       }
     }
     stage('Setup Environment') {
