@@ -1,3 +1,14 @@
+void setBuildStatus(String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: env.GIT_URL],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
+
 pipeline {
   agent none
   options{
@@ -11,11 +22,11 @@ pipeline {
       steps{
         checkout scm
       }
-      post{
+      /*post{
         always{
           gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started..hello from jenkins')
         }
-      }
+      }*/
     }
     stage('Setup Environment') {
       agent{
@@ -75,12 +86,15 @@ pipeline {
  post{
    success{
       slackSend(channel: '#edge-jenkins-ci', color: 'good', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+      setBuildStatus("Build Succeeded", "SUCCESS")
     }
     failure{
       slackSend(channel: '#edge-jenkins-ci', color: 'danger', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+      setBuildStatus("Build failed", "FAILURE")
     }
     unstable{
       slackSend(channel: '#edge-jenkins-ci', color: 'warning', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
+      setBuildStatus("Build Unstable", "UNSTABLE")
     }
     always{
       node('noida-linux-ubuntu16-ci-slave'){
@@ -88,7 +102,7 @@ pipeline {
         archiveArtifacts artifacts: 'html/**/*'
         //step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', failUnhealthy: false, failUnstable: false, maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
         //sh "curl -X POST -H \"Content-type: application/json\" --data '{\"channel\": \"#edge-jenkins-ci\", \"username\": \"webhookbot\", \"text\": \"JOB NAME: ${env.JOB_NAME}\\nBUILD NUMBER: ${env.BUILD_NUMBER}\\nSTATUS: ${currentBuild.currentResult}\\n${env.RUN_DISPLAY_URL}\"}' https://hooks.slack.com/services/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"
-        githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('Can\'t set status; build failed.'), successMsg: githubPRMessage('Can\'t set status; build succeeded.')), errorHandler: statusOnPublisherError('UNSTABLE'), statusMsg: githubPRMessage('${GITHUB_PR_COND_REF} run ended'), statusVerifier: allowRunOnStatus('FAILURE'), unstableAs: 'FAILURE'
+        //githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('CI build failed'), successMsg: githubPRMessage('CI build succeeded')), errorHandler: statusOnPublisherError('UNSTABLE'), statusMsg: githubPRMessage('${GITHUB_PR_NUMBER} '), statusVerifier: allowRunOnStatus('FAILURE'), unstableAs: 'FAILURE'
       }
     }
  }
