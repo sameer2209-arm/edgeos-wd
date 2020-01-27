@@ -8,6 +8,9 @@ pipeline {
       agent{
         label 'noida-linux-ubuntu16-ci-slave'
       }
+      always{
+        gitHubPRStatus githubPRMessage('${GITHUB_PR_COND_REF} run started..hello from jenkins')
+      }
       steps{
         checkout scm
       }
