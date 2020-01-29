@@ -1,14 +1,3 @@
-void setBuildStatus(String message, String state) {
-  step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: env.GIT_URL],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-  ]);
-}
-
-
 pipeline {
   agent any
   options{
@@ -86,15 +75,15 @@ pipeline {
  post{
    success{
       slackSend(channel: '#edge-jenkins-ci', color: 'good', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
-      setBuildStatus("Build Succeeded", "SUCCESS")
+      //setBuildStatus("Build Succeeded", "SUCCESS")
     }
     failure{
       slackSend(channel: '#edge-jenkins-ci', color: 'danger', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
-      setBuildStatus("Build failed", "FAILURE")
+      //setBuildStatus("Build failed", "FAILURE")
     }
     unstable{
       slackSend(channel: '#edge-jenkins-ci', color: 'warning', message: "JOB NAME: ${env.JOB_NAME}\nBUILD NUMBER: ${env.BUILD_NUMBER}\nSTATUS: ${currentBuild.currentResult}\n${env.RUN_DISPLAY_URL}")
-      setBuildStatus("Build Unstable", "UNSTABLE")
+      //setBuildStatus("Build Unstable", "UNSTABLE")
     }
     always{
       node('noida-linux-ubuntu16-ci-slave'){
